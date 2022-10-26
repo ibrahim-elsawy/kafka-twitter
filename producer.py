@@ -1,23 +1,14 @@
-from confluent_kafka import Producer
-from confluent_kafka.admin import NewTopic
+from threading import Thread
+from model.sentiment_analysis import do_sent_analysis
 
-def delivery_report(err, msg):
-	""" Called once for each message produced to indicate delivery result.
-	Triggered by poll() or flush(). """
-	if err is not None:
-		print('Message delivery failed: {}'.format(err))
-	else:
-		print('Message delivered to {} [{}]'.format(msg.topic(), msg.partition()))
+from model.twitter_connection import connect_to_twitter
 
 
-def createTopic (topicName):
-	NewTopic(topicName, 1, 1)
+# def createTopic (topicName):
+# 	NewTopic(topicName, 1, 1)
 
-def producer(topicName, id):
-	# createTopic(topicName)
-	data = "this msg from python producer"+"#*#"+id
-	p = Producer({'bootstrap.servers': 'localhost:9092'})
-	print('Kafka Producer has been initiated...')
-	p.poll(0)
-	p.produce(topicName, data.encode('utf-8'), callback=delivery_report)
-	p.flush()
+def producer(topicName, keyword:list, dataId):
+	thread = Thread(target = connect_to_twitter, args = (keyword, ))
+	thread.start()
+	do_sent_analysis(topicName, dataId)
+	thread.join()

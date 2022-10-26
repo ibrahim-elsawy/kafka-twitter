@@ -5,13 +5,13 @@ from producer import producer
 
 # ANSI colors
 c = (
-	"\033[0m",   # End of color ---> 0
-	"\033[36m",  # Cyan        ---> 1
-	"\033[91m",  # Red        ---> 2
-	"\033[35m",  # Magenta  ---> 3
-	"\033[32m",  # Green    ---> 4
-	"\033[33m"   # Yellow    ---> 5
-	"\033[34m"   # Blue       ---> 6
+	"\033[0m ",   # End of color ---> 0
+	"\033[36m ",  # Cyan        ---> 1
+	"\033[91m ",  # Red        ---> 2
+	"\033[35m ",  # Magenta  ---> 3
+	"\033[32m ",  # Green    ---> 4
+	"\033[33m "   # Yellow    ---> 5
+	"\033[34m "   # Blue       ---> 6
 )
 
 if __name__ == '__main__': 
@@ -31,10 +31,12 @@ if __name__ == '__main__':
 			print('Error: {}'.format(msg.error()))
 			continue
 		data=msg.value().decode('utf-8')
-		proc = Process(target = producer, args=("main4", data.split("#*#")[1]),)
+		keyword = [ data.split("#*#")[0] ]
+		dataId = data.split("#*#")[1]
+		proc = Process(target = producer, args=("main4", keyword, dataId),)
 		print(data)
 		procs.append(proc)
 		proc.start()
-		print(proc.pid)
-		proc.join()
+		# print(proc.pid)
+		# proc.join()
 	c.close()
